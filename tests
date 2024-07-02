@@ -86,7 +86,10 @@ def base_run(
 
     if exec_wrapper:
         logging.info(f"Running {bin} with customized wrapper.")
-        cmd = [f"{exec_wrapper}"] + cmd
+        if isinstance(exec_wrapper, list):
+            cmd = exec_wrapper + cmd
+        else:
+            cmd = [exec_wrapper] + cmd
 
     logging.info(" ".join(cmd))
     result = subprocess.run(
@@ -412,6 +415,10 @@ def bench(
             sys.exit(1)
         else:
             exec_wrapper = f"taskpolicy -c {mac_taskpolicy}"
+
+    if " " in exec_wrapper:
+       exec_wrapper = exec_wrapper.split(" ")
+  
 
     results = test_schemes(
         "benchmark",
